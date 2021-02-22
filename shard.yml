@@ -1,0 +1,10 @@
+name: http-sessions
+version: 0.1.0
+description: Type-safe sessions for `HTTP::Server`
+
+authors:
+- Johannes Müller <straightshoota@gmail.com>
+
+crystal: ">= 0.36.1"
+
+license: Apache-2.0
