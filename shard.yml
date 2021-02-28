@@ -1,4 +1,4 @@
-name: http-sessions
+name: http-session
 version: 0.1.0
 description: Type-safe sessions for `HTTP::Server`
 
