@@ -63,7 +63,7 @@ class HTTP::Session::Handler
   end
 
   private def create_session(context)
-    session = @storage.new_session(random.urlsafe_base64, context)
+    session = @storage.new_session(random.urlsafe_base64)
 
     cookie = base_cookie.dup
     cookie.value = session.session_id

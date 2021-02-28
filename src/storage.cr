@@ -7,7 +7,7 @@ abstract class HTTP::Session::Storage
     end
   end
 
-  def new_session(session_id : String, context : HTTP::Server::Context)
+  def new_session(session_id : String)
     HTTP::Session.new(session_id).tap do |session|
       put(session)
     end
