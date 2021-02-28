@@ -89,11 +89,34 @@ class HTTP::Session::Handler
 end
 
 class HTTP::Server::Context
-  getter? session : Session?
+  @session : Session?
 
   property! session_manager : HTTP::Session::Handler
 
-  def session
+  # Returns the session instance associated with this context.
+  #
+  # It delegates to `session_manager` which tries to retrieve a session as
+  # indicated by the session cookie or initializes a new session if that fails.
+  def session : HTTP::Session
     @session ||= session_manager.initialize_session(self)
+  end
+
+  # Returns the session instance associated with this context, but does not
+  # create a new session if none exists.
+  #
+  # It delegates to `session_manager` which tries to retrieve a session as
+  # indicated by the session cookie.
+  #
+  # NOTE: If `session` was called before, the session might actually be freshly
+  # initialized but it is still returned because it's already cached in the context.
+  def session? : HTTP::Session?
+    @session ||= session_manager.retrieve_session(self)
+  end
+
+  # Terminates the session associated with this context.
+  #
+  # Removes the session cookie and deletes the session from storage.
+  def terminate_session
+    session_manager.terminate_session(self)
   end
 end
