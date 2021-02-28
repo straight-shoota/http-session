@@ -15,17 +15,18 @@ class HTTP::Session::Handler
   # `random` is uses for generating session IDs.
   property random = Random.new
 
-  getter base_cookie
-
-  # Initializes a new session handler with *storage* backend.
-  #
-  # *base_cookie* is used to configure the basic properties of the cookie used for
+  # Configures the basic properties of the cookie used for
   # communicating the session id to the client.
-  def initialize(@storage : Storage, @base_cookie = HTTP::Cookie.new("session_id", ""))
+  getter cookie_prototype : HTTP::Cookie
+
+
+  # *cookie_prototype* configures the basic properties of the cookie used for
+  # communicating the session id to the client.
+  def initialize(@storage : Storage, @cookie_prototype = HTTP::Cookie.new("session_id", ""))
   end
 
   def cookie_name
-    base_cookie.name
+    cookie_prototype.name
   end
 
   def call(context : HTTP::Server::Context)
@@ -63,7 +64,7 @@ class HTTP::Session::Handler
   private def create_session(context)
     session = @storage.new_session(random.urlsafe_base64)
 
-    cookie = base_cookie.dup
+    cookie = cookie_prototype.dup
     cookie.value = session.session_id
     context.response.cookies << cookie
 

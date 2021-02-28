@@ -30,7 +30,7 @@ describe HTTP::Session::Handler do
     handler.random = Random.new(1)
 
     request = HTTP::Request.new("GET", "/")
-    request.cookies << handler.base_cookie.dup.tap do |request_cookie|
+    request.cookies << handler.cookie_prototype.dup.tap do |request_cookie|
       request_cookie.value = "invalid"
     end
     response = handle_http_request(handler, request)
