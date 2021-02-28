@@ -17,6 +17,7 @@ describe HTTP::Session::Storage::Memory do
     session1 = HTTP::Session.new("12345")
     storage.put(session1)
     time = Time.utc
+    sleep 1.microsecond
     session2 = HTTP::Session.new("67890")
     storage.put(session2)
     storage.gc(time)

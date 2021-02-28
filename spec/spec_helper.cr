@@ -10,3 +10,9 @@ def handle_http_request(handler, request, ignore_body = false, decompress = true
   io.rewind
   HTTP::Client::Response.from_io(io, ignore_body, decompress)
 end
+
+def empty_context(manager)
+  HTTP::Server::Context.new(HTTP::Request.new("GET", "/"), HTTP::Server::Response.new(IO::Memory.new)).tap do |context|
+    context.session_manager = manager
+  end
+end
