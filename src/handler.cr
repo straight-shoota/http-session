@@ -32,8 +32,6 @@ class HTTP::Session::Handler
     session_item = initialize_session(context)
 
     call_next(context)
-
-    persist_session(context, session_item)
   end
 
   def terminate_session(context : HTTP::Server::Context, session_id : String? = nil) : Nil
@@ -70,10 +68,6 @@ class HTTP::Session::Handler
     context.response.cookies << cookie
 
     session
-  end
-
-  private def persist_session(context, session_item)
-    @storage.persist(session_item)
   end
 end
 

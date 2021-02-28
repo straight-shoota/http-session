@@ -21,9 +21,6 @@ abstract class HTTP::Session::Storage
 
   abstract def gc(min : Time) : Nil
 
-  def persist(session : Session) : Nil
-  end
-
   property gc_interval : Time::Span = 4.hours
   property max_age : Time::Span = 48.hours
 
