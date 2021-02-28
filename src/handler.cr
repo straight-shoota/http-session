@@ -19,6 +19,7 @@ class HTTP::Session::Handler
   # communicating the session id to the client.
   getter cookie_prototype : HTTP::Cookie
 
+  getter storage : Storage
 
   # *cookie_prototype* configures the basic properties of the cookie used for
   # communicating the session id to the client.
@@ -39,7 +40,7 @@ class HTTP::Session::Handler
     session_id ||= context.session?.try(&.session_id) || session_id(context)
 
     if session_id
-      @storage.delete(session_id)
+      storage.delete(session_id)
       context.response.cookies.delete(cookie_name)
     end
   end
@@ -54,7 +55,7 @@ class HTTP::Session::Handler
 
   private def retrieve_session(context)
     if session_id = session_id(context)
-      if session = @storage[session_id]
+      if session = storage[session_id]
         session.touch
         session
       end
@@ -62,7 +63,7 @@ class HTTP::Session::Handler
   end
 
   private def create_session(context)
-    session = @storage.new_session(random.urlsafe_base64)
+    session = storage.new_session(random.urlsafe_base64)
 
     cookie = cookie_prototype.dup
     cookie.value = session.session_id
