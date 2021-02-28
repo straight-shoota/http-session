@@ -19,7 +19,7 @@ abstract class HTTP::Session::Storage
 
   abstract def fetch(session_id : String) : Session?
 
-  abstract def gc(min : Time) : Nil
+  abstract def delete_expired(min : Time) : Nil
 
   property gc_interval : Time::Span = 4.hours
   property max_age : Time::Span = 48.hours
@@ -29,7 +29,7 @@ abstract class HTTP::Session::Storage
       sleep gc_interval
 
       min_time = now - max_age
-      gc(min_time)
+      delete_expired(min_time)
     end
   end
 end

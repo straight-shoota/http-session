@@ -15,7 +15,7 @@ class HTTP::Session::Storage::Memory < HTTP::Session::Storage
     @storage.delete(session_id)
   end
 
-  def gc(min : Time) : Nil
+  def delete_expired(min : Time) : Nil
     @storage.select! { |_, session| session.valid?(min) }
   end
 end
