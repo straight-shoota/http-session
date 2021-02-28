@@ -44,7 +44,7 @@ describe HTTP::Session::Handler do
     handler = HTTP::Session::Handler.new(storage)
     handler.next = ->(context : HTTP::Server::Context) do
       session_id = context.session.session_id
-      handler.terminate_session(context)
+      handler.terminate_session(context, session_id)
       context.response.print "Deleted session_id: #{session_id}"
     end
     handler.random = Random.new(1)
