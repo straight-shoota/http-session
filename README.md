@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/straight-shoota/http-session/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/straight-shoota/http-session/actions/workflows/ci.yml)
+
 # `http-session`
 
 This shard provides type-safe sessions for `HTTP::Server`.
