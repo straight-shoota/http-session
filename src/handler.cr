@@ -1,7 +1,7 @@
 require "log"
 require "http"
 
-# `HTTP::Session::Handler` implement `HTTP::Handler` for use with an `HTTP::Server`.
+# `HTTP::Session::Handler` implements `HTTP::Handler` for use with an `HTTP::Server`.
 #
 # The handler is responsible for populating the `session` property on
 # `HTTP::Server::Context`. It does so lazily, i.e. on the first access.
@@ -13,13 +13,14 @@ require "http"
 class HTTP::Session::Handler
   include HTTP::Handler
 
-  # `random` is uses for generating session IDs.
+  # Random source for generating session IDs.
   property random = Random.new
 
   # Configures the basic properties of the cookie used for
   # communicating the session id to the client.
   getter cookie_prototype : HTTP::Cookie
 
+  # Returns the storage engine.
   getter storage : Storage
 
   # Creates a new session handler.
@@ -29,6 +30,10 @@ class HTTP::Session::Handler
   def initialize(@storage : Storage, @cookie_prototype = HTTP::Cookie.new("session_id", ""))
   end
 
+  # Returns the name of the cookie used to communicate the session id to the
+  # client.
+  #
+  # This value is configurable through `cookie_prototype`.
   def cookie_name
     cookie_prototype.name
   end
@@ -39,6 +44,9 @@ class HTTP::Session::Handler
     call_next(context)
   end
 
+  # Terminates the session associated with the context.
+  #
+  # Removes the session cookie and deletes the session from storage.
   def terminate_session(context : HTTP::Server::Context, session_id : String? = nil) : Nil
     session_id ||= context.session?.try(&.session_id) || session_id(context)
 
@@ -56,7 +64,7 @@ class HTTP::Session::Handler
     context.request.cookies[cookie_name]?.try(&.value)
   end
 
-  private def retrieve_session(context)
+  def retrieve_session(context)
     if session_id = session_id(context)
       if session = storage[session_id]
         session.touch
@@ -65,11 +73,11 @@ class HTTP::Session::Handler
     end
   end
 
-  def new_session_id
+  private def new_session_id
     random.urlsafe_base64
   end
 
-  private def create_session(context)
+  def create_session(context)
     session = storage.new_session(new_session_id)
 
     cookie = cookie_prototype.dup
