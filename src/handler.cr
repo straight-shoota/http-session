@@ -3,10 +3,11 @@ require "http"
 
 # `HTTP::Session::Handler` implement `HTTP::Handler` for use with an `HTTP::Server`.
 #
-# The handler sets the `session` property on `HTTP::Server::Context`
-# which can then be accessed in subsequent handlers.
+# The handler is responsible for populating the `session` property on
+# `HTTP::Server::Context`. It does so lazily, i.e. on the first access.
+#
 # It either loads an existing session from the session store (identified by
-# session cookie) or initializes a new session.
+# session cookie) or creates a new session.
 #
 # An `HTTP::Session::Storage` instance is used as backend for session storage.
 class HTTP::Session::Handler
@@ -21,6 +22,8 @@ class HTTP::Session::Handler
 
   getter storage : Storage
 
+  # Creates a new session handler.
+  #
   # *cookie_prototype* configures the basic properties of the cookie used for
   # communicating the session id to the client.
   def initialize(@storage : Storage, @cookie_prototype = HTTP::Cookie.new("session_id", ""))
@@ -31,7 +34,7 @@ class HTTP::Session::Handler
   end
 
   def call(context : HTTP::Server::Context)
-    session_item = initialize_session(context)
+    context.session_manager = self
 
     call_next(context)
   end
@@ -46,7 +49,7 @@ class HTTP::Session::Handler
   end
 
   def initialize_session(context)
-    context.session = retrieve_session(context) || create_session(context)
+    retrieve_session(context) || create_session(context)
   end
 
   private def session_id(context)
@@ -78,5 +81,11 @@ class HTTP::Session::Handler
 end
 
 class HTTP::Server::Context
-  property! session : Session
+  getter? session : Session?
+
+  property! session_manager : HTTP::Session::Handler
+
+  def session
+    @session ||= session_manager.initialize_session(self)
+  end
 end
