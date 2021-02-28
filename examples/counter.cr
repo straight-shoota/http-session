@@ -1,4 +1,4 @@
-require "../src/session"
+require "../src/http-session"
 
 class HTTP::Session
   property example_counter = 0
