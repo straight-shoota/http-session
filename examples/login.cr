@@ -1,12 +1,15 @@
 require "../src/http-session"
 
-class HTTPSession
-  property username : String?
+record UserSession, username : String
+
+storage = HTTPSession::Storage::Memory(UserSession).new
+sessions = HTTPSession::Manager.new(storage)
+
+spawn do
+  storage.run_gc_loop
 end
 
-session_handler = HTTPSession::Handler.new(HTTPSession::Storage::Memory.new)
-
-server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session_handler]) do |context|
+server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new]) do |context|
   case context.request.path
   when "/login"
     case context.request.method
@@ -18,7 +21,9 @@ server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session
         next
       end
       Log.info { "authenticated user #{username}" }
-      context.session.username = username
+
+      sessions.set(context, UserSession.new(username))
+
       context.response.headers["Location"] = "/"
       context.response.status = :found
       next
@@ -31,16 +36,16 @@ server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session
         </form>
         HTML
     when "DELETE"
-      context.terminate_session
+      sessions.delete(context)
       context.response.headers["Location"] = "/"
       context.response.status = :found
     else
       context.response.respond_with_status :method_not_allowed
     end
   when "/"
-    if username = context.session?.try(&.username)
+    if session = sessions.get(context)
       context.response.headers["Content-Type"] = "text/html"
-      context.response.puts "Hello #{username}"
+      context.response.puts "Hello #{session.username}"
       context.response.puts <<-HTML
         <form action="/login" method="DELETE">
           <button type="submit">Logout</button>

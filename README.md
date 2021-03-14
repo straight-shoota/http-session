@@ -18,25 +18,29 @@ This shard provides type-safe sessions for `HTTP::Server`.
 
 ## Usage
 
-To setup session handling, an instance of `HTTPSession::Handler` needs to be
-in the handler chain of the `HTTP::Server` instance. It should come before any
-handler that requires access to the session. The session instance
-is available through the `session` property of `HTTP::Server::Context`.
-`HTTPSession` can be re-opened to add custom properties.
+The basic tool for session management is `HTTPSession::Manager`.
+
+The session manager uses a `HTTPSession::Storage` backend for storage.
+
+Currently available implementations:
+
+* `HTTPSession::Storage::Memory`: In-memory storage. Won't persist beyond
+  server restarts.
+
+### Example
 
 ```crystal
 require "http-session"
 
-class HTTPSession
-  property example_counter = 0
-end
+storage = HTTPSession::Storage::Memory(Int32).new
+sessions = HTTPSession::Manager.new(storage)
 
-session_handler = HTTPSession::Handler.new(HTTPSession::Storage::Memory.new)
-
-server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session_handler]) do |context|
+server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new]) do |context|
   if context.request.path == "/"
-    context.session.example_counter += 1
-    context.response.puts context.session.example_counter
+    counter = sessions.get(context) || 0
+    counter += 1
+    sessions.set(context, counter)
+    context.response.puts counter
   else
     context.response.respond_with_status :not_found
   end
@@ -48,12 +52,7 @@ puts "Listening on http://#{address}"
 server.listen
 ```
 
-The session handler uses a `HTTPSession::Storage` backend for storage.
-
-Currently available implementations:
-
-* `HTTPSession::Storage::Memory`: In-memory storage. Won't persist beyond
-  server restarts.
+More examples can be found in [`examples/`](examples).
 
 ## Contributing
 
