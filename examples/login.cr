@@ -1,10 +1,10 @@
 require "../src/http-session"
 
-class HTTP::Session
+class HTTPSession
   property username : String?
 end
 
-session_handler = HTTP::Session::Handler.new(HTTP::Session::Storage::Memory.new)
+session_handler = HTTPSession::Handler.new(HTTPSession::Storage::Memory.new)
 
 server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session_handler]) do |context|
   case context.request.path

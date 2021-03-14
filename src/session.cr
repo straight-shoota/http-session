@@ -1,4 +1,4 @@
-# `HTTP::Session` represents the data associated with a session. It's meant to
+# `HTTPSession` represents the data associated with a session. It's meant to
 # be reopened to add application specific properties.
 # For using persistent storage, the properties need to be compatible with the
 # serialization mechanism of the employed storage engine (for example provide
@@ -6,7 +6,7 @@
 #
 # It is recommended to prefix custom properties with the name of the shard to avoid
 # conflicts when different libraries could introduce homonymous properties.
-class HTTP::Session
+class HTTPSession
   Log = Log.for("http.session")
 
   getter session_id : String

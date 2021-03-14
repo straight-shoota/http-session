@@ -6,11 +6,11 @@ private def empty_context(manager)
   end
 end
 
-describe HTTP::Session::Handler do
+describe HTTPSession::Handler do
   describe "#call" do
     it "initializes session" do
-      storage = HTTP::Session::Storage::Memory.new
-      handler = HTTP::Session::Handler.new(storage)
+      storage = HTTPSession::Storage::Memory.new
+      handler = HTTPSession::Handler.new(storage)
       handler.next = ->(context : HTTP::Server::Context) do
         context.response.print "session_id: #{context.session.session_id}"
       end
@@ -31,8 +31,8 @@ describe HTTP::Session::Handler do
 
   describe "#initialize_session" do
     it "overrides invalid session cookie" do
-      storage = HTTP::Session::Storage::Memory.new
-      handler = HTTP::Session::Handler.new(storage)
+      storage = HTTPSession::Storage::Memory.new
+      handler = HTTPSession::Handler.new(storage)
       context = empty_context(handler)
       handler.random = Random.new(1)
 
@@ -47,8 +47,8 @@ describe HTTP::Session::Handler do
   end
 
   it "#terminate_session" do
-    storage = HTTP::Session::Storage::Memory.new
-    handler = HTTP::Session::Handler.new(storage)
+    storage = HTTPSession::Storage::Memory.new
+    handler = HTTPSession::Handler.new(storage)
     context = empty_context(handler)
     session_id = context.session.session_id
     context.response.cookies["session_id"]?.try(&.value).should eq session_id

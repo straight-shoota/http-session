@@ -2,8 +2,8 @@ require "./spec_helper"
 
 describe HTTP::Server::Context do
   it "#session" do
-    storage = HTTP::Session::Storage::Memory.new
-    handler = HTTP::Session::Handler.new(storage)
+    storage = HTTPSession::Storage::Memory.new
+    handler = HTTPSession::Handler.new(storage)
     handler.random = Random.new(1)
     context = empty_context(handler)
 
@@ -17,8 +17,8 @@ describe HTTP::Server::Context do
   end
 
   it "#session?" do
-    storage = HTTP::Session::Storage::Memory.new
-    handler = HTTP::Session::Handler.new(storage)
+    storage = HTTPSession::Storage::Memory.new
+    handler = HTTPSession::Handler.new(storage)
     context = empty_context(handler)
 
     context.session?.should be_nil

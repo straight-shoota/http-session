@@ -1,15 +1,15 @@
 require "./spec_helper"
 
-describe HTTP::Session::Storage do
+describe HTTPSession::Storage do
   it "#new_session" do
-    storage = HTTP::Session::Storage::Memory.new
+    storage = HTTPSession::Storage::Memory.new
     session = storage.new_session("12345")
     session.session_id.should eq "12345"
     storage["12345"].should be(session)
   end
 
   it "#[]?" do
-    storage = HTTP::Session::Storage::Memory.new
+    storage = HTTPSession::Storage::Memory.new
     session = storage.new_session("12345")
     time = Time.utc
     storage["12345"].should be(session)
