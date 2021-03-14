@@ -10,11 +10,16 @@ CRYSTAL ?= crystal
 SRC_SOURCES ::= $(shell find src -name '*.cr' 2>/dev/null)
 LIB_SOURCES ::= $(shell find lib -name '*.cr' 2>/dev/null)
 SPEC_SOURCES ::= $(shell find spec -name '*.cr' 2>/dev/null)
+EXAMPLE_SOURCES ::= $(shell find examples -name '*.cr' 2>/dev/null)
 
 .PHONY: test
 test: ## Run the test suite
 test: lib
 	$(CRYSTAL) spec
+
+.PHONY: build_examples
+build_examples: lib $(EXAMPLE_SOURCES)
+	for i in $(EXAMPLE_SOURCES); do $(CRYSTAL) build $$i -o $${i%.cr}; done
 
 .PHONY: format
 format: ## Apply source code formatting

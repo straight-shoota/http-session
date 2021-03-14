@@ -20,6 +20,8 @@ jobs:
           crystal: ${{ matrix.crystal }}
       - name: Run tests
         run: make test
+      - name: Build examples
+        run: CRYSTAL_OPTS="--no-codegen" make build_examples
       - name: Check formatting
         run: crystal tool format --check
         if: matrix.crystal == 'latest'
