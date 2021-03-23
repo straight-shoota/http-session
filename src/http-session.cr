@@ -1,3 +1,2 @@
-require "./session"
+require "./manager"
 require "./storage"
-require "./handler"

@@ -1,15 +1,14 @@
 require "../src/http-session"
 
-class HTTPSession
-  property example_counter = 0
-end
+storage = HTTPSession::Storage::Memory(Int32).new
+sessions = HTTPSession::Manager.new(storage)
 
-session_handler = HTTPSession::Handler.new(HTTPSession::Storage::Memory.new)
-
-server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new, session_handler]) do |context|
+server = HTTP::Server.new([HTTP::LogHandler.new, HTTP::ErrorHandler.new]) do |context|
   if context.request.path == "/"
-    context.session.example_counter += 1
-    context.response.puts context.session.example_counter
+    counter = sessions.get(context) || 0
+    counter += 1
+    sessions.set(context, counter)
+    context.response.puts counter
   else
     context.response.respond_with_status :not_found
   end
