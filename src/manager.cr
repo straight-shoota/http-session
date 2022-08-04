@@ -5,7 +5,9 @@ require "./storage"
 class HTTPSession
   class Manager(T)
     # Random source for generating session IDs.
-    property random : Random = Random.new
+    #
+    # This should be a cryptographically secure pseudorandom number generator (CSPRNG).
+    property random : Random = Random::Secure
 
     # Configures the basic properties of the cookie used for
     # communicating the session id to the client.
@@ -18,7 +20,7 @@ class HTTPSession
     #
     # *cookie_prototype* configures the basic properties of the cookie used for
     # communicating the session id to the client.
-    def initialize(@storage : Storage(T), @cookie_prototype = HTTP::Cookie.new("session_id", ""))
+    def initialize(@storage : Storage(T), @cookie_prototype = HTTP::Cookie.new("session_id", "", secure: true, http_only: true, samesite: :strict))
     end
 
     # Returns the name of the cookie used to communicate the session id to the
@@ -46,7 +48,8 @@ class HTTPSession
     end
 
     def set(context : HTTP::Server::Context, session : T) : Nil
-      unless session_id = session_id(context)
+      session_id = session_id(context)
+      unless session_id && @storage[session_id]
         session_id = new_session_id
 
         cookie = cookie_prototype.dup

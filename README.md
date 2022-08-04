@@ -30,7 +30,7 @@ Currently available implementations:
 ### Example
 
 ```crystal
-require "http-session"
+require "./src/http-session"
 
 storage = HTTPSession::Storage::Memory(Int32).new
 sessions = HTTPSession::Manager.new(storage)
@@ -53,6 +53,10 @@ server.listen
 ```
 
 More examples can be found in [`examples/`](examples).
+
+## Security
+
+https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 
 ## Contributing
 

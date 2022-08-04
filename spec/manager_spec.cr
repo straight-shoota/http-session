@@ -22,6 +22,19 @@ describe HTTPSession::Manager do
       cookie.value.should eq "UTA54jUvEQE1nVDTSi-TCw"
       storage["UTA54jUvEQE1nVDTSi-TCw"].should be(session)
     end
+
+    it "strict session management (disallow fake session_id)" do
+      storage = HTTPSession::Storage::Memory(TestSession).new
+      manager = HTTPSession::Manager.new(storage)
+      session = TestSession.new
+
+      context = empty_context
+      context.request.cookies["session_id"] = "123456"
+      manager.set(context, session)
+
+      cookie = context.response.cookies["session_id"]?.should_not be_nil
+      cookie.value.should_not eq "123456"
+    end
   end
 
   describe "#delete" do
