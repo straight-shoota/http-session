@@ -14,7 +14,7 @@ class HTTPSession
     getter cookie_prototype : HTTP::Cookie
 
     # Returns the storage engine.
-    getter storage : Storage(T)
+    getter storage : StorageInterface(T)
 
     # Length of generated session IDs in bytes.
     property session_id_length = 16
@@ -23,6 +23,13 @@ class HTTPSession
     #
     # *cookie_prototype* configures the basic properties of the cookie used for
     # communicating the session id to the client.
+    # It uses a secure configuration by default. This configuration can be even
+    # more restricted (for example via `Domain` and `Path` properties) depending
+    # on use case.
+    # Lifting the default restrictions is not recommended.
+    # Cookies are not persistent by default, thus they are expected to disappear at
+    # the end of a browser session. Add `Max-Age` or `Expires` header for
+    # persistent cookies.
     def initialize(@storage : Storage(T), @cookie_prototype = HTTP::Cookie.new("session_id", "", secure: true, http_only: true, samesite: :strict))
     end
 
