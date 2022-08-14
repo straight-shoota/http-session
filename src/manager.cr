@@ -68,7 +68,13 @@ class HTTPSession
     end
 
     private def new_session_id
-      random.urlsafe_base64(session_id_length)
+      100.times do
+        new_id = random.urlsafe_base64(session_id_length)
+        # ensure uniqueness
+        return new_id unless @storage[new_id]
+      end
+
+      raise RuntimeException.new("Failed to generate unique session ID")
     end
   end
 end

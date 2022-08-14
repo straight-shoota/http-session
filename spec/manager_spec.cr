@@ -35,6 +35,19 @@ describe HTTPSession::Manager do
       cookie = context.response.cookies["session_id"]?.should_not be_nil
       cookie.value.should_not eq "123456"
     end
+
+    it "enforce uniqueness of session ID" do
+      storage = HTTPSession::Storage::Memory(TestSession).new
+      storage["UTA54jUvEQE1nVDTSi-TCw"] = TestSession.new
+      manager = HTTPSession::Manager.new(storage)
+      manager.random = Random.new(1)
+      session = TestSession.new
+      context = empty_context
+      manager.set(context, session)
+      cookie = context.response.cookies["session_id"]
+      cookie.value.should eq "dmekijYgU4zYIc2g0KjmuA"
+      storage["dmekijYgU4zYIc2g0KjmuA"].should be(session)
+    end
   end
 
   describe "#delete" do
