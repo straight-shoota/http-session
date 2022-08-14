@@ -20,7 +20,7 @@ class HTTPSession
     #
     # *cookie_prototype* configures the basic properties of the cookie used for
     # communicating the session id to the client.
-    def initialize(@storage : Storage(T), @cookie_prototype = HTTP::Cookie.new("session_id", ""))
+    def initialize(@storage : Storage(T), @cookie_prototype = HTTP::Cookie.new("session_id", "", secure: true, http_only: true, samesite: :strict))
     end
 
     # Returns the name of the cookie used to communicate the session id to the
