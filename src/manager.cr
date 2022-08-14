@@ -16,6 +16,9 @@ class HTTPSession
     # Returns the storage engine.
     getter storage : Storage(T)
 
+    # Length of generated session IDs in bytes.
+    property session_id_length = 16
+
     # Creates a new session handler.
     #
     # *cookie_prototype* configures the basic properties of the cookie used for
@@ -65,7 +68,7 @@ class HTTPSession
     end
 
     private def new_session_id
-      random.urlsafe_base64
+      random.urlsafe_base64(session_id_length)
     end
   end
 end
