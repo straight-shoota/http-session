@@ -5,7 +5,9 @@ require "./storage"
 class HTTPSession
   class Manager(T)
     # Random source for generating session IDs.
-    property random : Random = Random.new
+    #
+    # This should be a cryptographically secure pseudorandom number generator (CSPRNG).
+    property random : Random = Random::Secure
 
     # Configures the basic properties of the cookie used for
     # communicating the session id to the client.
