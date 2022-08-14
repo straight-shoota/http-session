@@ -48,7 +48,8 @@ class HTTPSession
     end
 
     def set(context : HTTP::Server::Context, session : T) : Nil
-      unless session_id = session_id(context)
+      session_id = session_id(context)
+      unless session_id && @storage[session_id]
         session_id = new_session_id
 
         cookie = cookie_prototype.dup
