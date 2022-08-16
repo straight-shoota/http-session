@@ -54,6 +54,12 @@ server.listen
 
 More examples can be found in [`examples/`](examples).
 
+## Security
+
+This shard follows the guidelines from the [OWASP Session Management Cheat Sheet](
+https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
+in order to apply best practices for effective threat control.
+
 ## Contributing
 
 1. Fork it (<https://github.com/straight-shoota/http-session/fork>)
