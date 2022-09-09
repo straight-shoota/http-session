@@ -1,5 +1,4 @@
 require "http"
-require "./entry"
 require "./storage"
 
 class HTTPSession

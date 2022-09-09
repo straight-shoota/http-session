@@ -14,7 +14,7 @@ describe HTTPSession::Manager do
     it do
       storage = HTTPSession::Storage::Memory(TestSession).new
       manager = HTTPSession::Manager.new(storage)
-      manager.random = Random.new(1)
+      HTTPSession::Manager.random = Random.new(1)
       session = TestSession.new
       context = empty_context
       manager.set(context, session)
@@ -40,7 +40,7 @@ describe HTTPSession::Manager do
       storage = HTTPSession::Storage::Memory(TestSession).new
       storage["UTA54jUvEQE1nVDTSi-TCw"] = TestSession.new
       manager = HTTPSession::Manager.new(storage)
-      manager.random = Random.new(1)
+      HTTPSession::Manager.random = Random.new(1)
       session = TestSession.new
       context = empty_context
       manager.set(context, session)
@@ -67,7 +67,7 @@ describe HTTPSession::Manager do
     it "new session" do
       storage = HTTPSession::Storage::Memory(TestSession).new
       manager = HTTPSession::Manager.new(storage)
-      manager.random = Random.new(1)
+      HTTPSession::Manager.random = Random.new(1)
       session = TestSession.new
       context = empty_context
 

@@ -1,6 +1,6 @@
 class HTTPSession
   # Defines the storage backend interface used by `HTTPSession::Manager`.
-  abstract module StorageInterface(T)
+  module StorageInterface(T)
     # Fetches the storage value for *session_id*.
     # Returns `nil` if no value exists.
     abstract def [](session_id : String) : T?
