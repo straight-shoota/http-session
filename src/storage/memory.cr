@@ -19,5 +19,12 @@ class HTTPSession
     def delete_expired(min : Time) : Nil
       @storage.select! { |_, entry| entry.valid?(min) }
     end
+
+    # Generates a new unused session_id.
+    #
+    # This is a basic implementation
+    def new_session_id : String
+      Manager.new_session_id { |id| !has?(id) }
+    end
   end
 end

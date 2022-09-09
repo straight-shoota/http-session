@@ -15,6 +15,9 @@ class HTTPSession
 
     # Deletes the storage value for *session_id*.
     abstract def delete(session_id : String) : Nil
+
+    # Generates a new and unused session_id.
+    abstract def new_session_id : String
   end
 
   # A base class for implementing storage backends.

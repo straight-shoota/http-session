@@ -4,20 +4,12 @@ require "./storage"
 
 class HTTPSession
   class Manager(T)
-    # Random source for generating session IDs.
-    #
-    # This should be a cryptographically secure pseudorandom number generator (CSPRNG).
-    property random : Random = Random::Secure
-
     # Configures the basic properties of the cookie used for
     # communicating the session id to the client.
     getter cookie_prototype : HTTP::Cookie
 
     # Returns the storage engine.
     getter storage : StorageInterface(T)
-
-    # Length of generated session IDs in bytes.
-    property session_id_length = 16
 
     # Creates a new session handler.
     #
@@ -60,7 +52,7 @@ class HTTPSession
     def set(context : HTTP::Server::Context, session : T) : Nil
       session_id = session_id(context)
       unless session_id && @storage.has?(session_id)
-        session_id = new_session_id
+        session_id = @storage.new_session_id
 
         cookie = cookie_prototype.dup
         cookie.value = session_id
@@ -74,14 +66,23 @@ class HTTPSession
       context.request.cookies[cookie_name]?.try(&.value) || context.response.cookies[cookie_name]?.try(&.value)
     end
 
-    private def new_session_id
+    # Random source for generating session IDs.
+    #
+    # This should be a cryptographically secure pseudorandom number generator (CSPRNG).
+    class_property random : Random = Random::Secure
+
+    # Generates a new session_id.
+    #
+    # Potential values are passed to the block which is supposed to return `true`
+    # when the session_id is good and unused.
+    def self.new_session_id(session_id_length : Int32 = 16, & : String -> Bool)
       100.times do
         new_id = random.urlsafe_base64(session_id_length)
         # ensure uniqueness
-        return new_id unless @storage.has?(new_id)
+        return new_id if yield(new_id)
       end
 
-      raise RuntimeException.new("Failed to generate unique session ID")
+      raise RuntimeError.new("Failed to generate unique session ID")
     end
   end
 end
