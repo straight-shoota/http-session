@@ -5,6 +5,11 @@ class HTTPSession
     # Returns `nil` if no value exists.
     abstract def [](session_id : String) : T?
 
+    # Returns true if *session_id* exists.
+    def has?(session_id : String) : Bool
+      !self[session_id].nil?
+    end
+
     # Sets the storage value for *session_id*.
     abstract def []=(session_id : String, session : T) : Nil
 

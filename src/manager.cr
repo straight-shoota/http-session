@@ -59,7 +59,7 @@ class HTTPSession
 
     def set(context : HTTP::Server::Context, session : T) : Nil
       session_id = session_id(context)
-      unless session_id && @storage[session_id]
+      unless session_id && @storage.has?(session_id)
         session_id = new_session_id
 
         cookie = cookie_prototype.dup
@@ -78,7 +78,7 @@ class HTTPSession
       100.times do
         new_id = random.urlsafe_base64(session_id_length)
         # ensure uniqueness
-        return new_id unless @storage[new_id]
+        return new_id unless @storage.has?(new_id)
       end
 
       raise RuntimeException.new("Failed to generate unique session ID")
