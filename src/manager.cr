@@ -48,9 +48,25 @@ class HTTPSession
       end
     end
 
+    # Sets the session for *context* to *session*.
     def set(context : HTTP::Server::Context, session : T) : Nil
+      set(context, session) { }
+    end
+
+    # Sets the session for *context* to *session*.
+    # Yields if *context* has a session_id that doesn't exist in the backend.
+    # This can be useful for detecting malicious behaviour or entirely rejecting
+    # requests with a bad session_id.
+    #
+    # ```
+    # manager.set(context, user_session) do |bad_session_id|
+    #   Log.warn &.emit("Bad session_id used", bad_session_id: bad_session_id)
+    # end
+    # ```
+    def set(context : HTTP::Server::Context, session : T, & : String -> _) : Nil
       session_id = session_id(context)
       unless session_id && @storage.has?(session_id)
+        yield session_id if session_id
         session_id = @storage.new_session_id
 
         cookie = cookie_prototype.dup
