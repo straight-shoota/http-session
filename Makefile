@@ -19,7 +19,7 @@ test: lib
 
 .PHONY: build_examples
 build_examples: lib $(EXAMPLE_SOURCES)
-	for i in $(EXAMPLE_SOURCES); do $(CRYSTAL) build $$i -o $${i%.cr}; done
+	for i in $$(find examples -name '*.cr'); do $(CRYSTAL) build $$i -o $${i%.cr}; done
 
 .PHONY: format
 format: ## Apply source code formatting
