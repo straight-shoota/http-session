@@ -1,16 +1,16 @@
 -include Makefile.local # for optional local options
 
-DOC_SOURCE::= src/http-session.cr
+DOC_SOURCE:= src/http-session.cr
 
 # The shards command to use
 SHARDS ?= shards
 # The crystal command to use
 CRYSTAL ?= crystal
 
-SRC_SOURCES ::= $(shell find src -name '*.cr' 2>/dev/null)
-LIB_SOURCES ::= $(shell find lib -name '*.cr' 2>/dev/null)
-SPEC_SOURCES ::= $(shell find spec -name '*.cr' 2>/dev/null)
-EXAMPLE_SOURCES ::= $(shell find examples -name '*.cr' 2>/dev/null)
+SRC_SOURCES := $(shell find src -name '*.cr' 2>/dev/null)
+LIB_SOURCES := $(shell find lib -name '*.cr' 2>/dev/null)
+SPEC_SOURCES := $(shell find spec -name '*.cr' 2>/dev/null)
+EXAMPLE_SOURCES := $(shell find examples -name '*.cr' 2>/dev/null)
 
 .PHONY: test
 test: ## Run the test suite
@@ -19,7 +19,7 @@ test: lib
 
 .PHONY: build_examples
 build_examples: lib $(EXAMPLE_SOURCES)
-	for i in $(EXAMPLE_SOURCES); do $(CRYSTAL) build $$i -o $${i%.cr}; done
+	for i in $$(find examples -name '*.cr'); do $(CRYSTAL) build $$i -o $${i%.cr}; done
 
 .PHONY: format
 format: ## Apply source code formatting
